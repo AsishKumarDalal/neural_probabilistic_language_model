@@ -11,12 +11,15 @@ from torch.utils.data import DataLoader, Dataset
 from model import NeuralModel
 
 VOCAB_SIZE = 20000
-EMB_SIZE = 128
+EMB_SIZE = 256
 CONTEXT = 10
-HIDDEN = 256
+HIDDEN = 512
+HID_LAYERS = 3
+ACTIVATION = "relu"
 BATCH_SIZE = 256
 LR = 3e-4
 EPOCHS = 3
+DATASET = "wikitext-103-raw-v1"
 TOKENIZER_FILE = "tokenizer.json"
 MODEL_FILE = "model.pt"
 SPECIAL_TOKENS = ["<unk>", "<pad>", "<bos>", "<eos>"]
@@ -37,9 +40,9 @@ class NPLMDataset(Dataset):
 def build_tokenizer():
     if os.path.exists(TOKENIZER_FILE):
         return Tokenizer.from_file(TOKENIZER_FILE)
-    print("downloading wikitext-2 train split...")
-    ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
-    with open("wikitext2_train.txt", "w", encoding="utf-8") as f:
+    print(f"downloading {DATASET} train split...")
+    ds = load_dataset("wikitext", DATASET, split="train")
+    with open("wikitext103_train.txt", "w", encoding="utf-8") as f:
         f.write("\n".join(ds["text"]))
     tok = ByteLevelBPETokenizer()
     tok.train(
@@ -54,7 +57,7 @@ def build_tokenizer():
 
 
 def get_split(split, tok, limit):
-    ds = load_dataset("wikitext", "wikitext-2-raw-v1", split=split)
+    ds = load_dataset("wikitext", DATASET, split=split)
     ids = []
     for text in ds["text"]:
         ids.extend(tok.encode(text).ids)
@@ -115,7 +118,15 @@ def main():
     )
     val_dl = DataLoader(get_split("validation", tok, args.limit), batch_size=BATCH_SIZE)
 
-    model = NeuralModel(vocab_size, EMB_SIZE, CONTEXT, HIDDEN, d_conn=True).to(device)
+    model = NeuralModel(
+        vocab_size,
+        EMB_SIZE,
+        CONTEXT,
+        HIDDEN,
+        hid_layers=HID_LAYERS,
+        d_conn=True,
+        activation=ACTIVATION,
+    ).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
     loss_fn = nn.CrossEntropyLoss()
 
