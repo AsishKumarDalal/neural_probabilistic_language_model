@@ -4,5 +4,6 @@ __pycache__/
 
 model.pt
 tokenizer.json
+artifacts/
 wikitext2_train.txt
 *.log
