@@ -125,12 +125,20 @@ sample: the war was fought ...
 
 ### Results: plots in `artifacts/`
 
-After training, two plots are saved:
+After training, two plots are saved into `artifacts/`:
 
 - **`train_loss.png`** — the full per-batch training loss curve (downsampled), with dashed lines marking epoch boundaries
 - **`loss_accuracy.png`** — loss per epoch (train vs validation) and top-1 accuracy per epoch (train vs validation)
 
 Top-1 accuracy for a 20k-class softmax looks small (typically 0.10–0.20) — that is normal for next-token prediction; the loss is the more meaningful metric.
+
+Here is what the plots look like from a recent run:
+
+![Training loss per batch](artifacts/train_loss.png)
+
+![Loss and accuracy per epoch](artifacts/loss_accuracy.png)
+
+(An extra screenshot from that run, `Screenshot 2026-08-03 141018.png`, also lives in `artifacts/`.)
 
 ## Generating text
 
