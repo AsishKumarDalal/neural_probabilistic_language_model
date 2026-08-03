@@ -20,6 +20,7 @@ CONTEXT = 10
 HIDDEN = 256
 HID_LAYERS = 1
 ACTIVATION = "relu"
+DROPOUT = 0.2
 BATCH_SIZE = 256
 LR = 3e-4
 EPOCHS = 3
@@ -174,6 +175,7 @@ def main():
         hid_layers=HID_LAYERS,
         d_conn=True,
         activation=ACTIVATION,
+        dropout=DROPOUT,
     ).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
     loss_fn = nn.CrossEntropyLoss()
