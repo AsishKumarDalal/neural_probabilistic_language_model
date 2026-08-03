@@ -140,6 +140,8 @@ Here is what the plots look like from a recent run:
 
 (An extra screenshot from that run, `Screenshot 2026-08-03 141018.png`, also lives in `artifacts/`.)
 
+> **Current status: the model overfits.** As the plots show, training loss keeps dropping while validation loss starts rising after the first epochs — the classic overfitting signature. The added dropout (0.2) is meant to close this gap; re-run training and compare the validation curves to see if it helps.
+
 ## Generating text
 
 `train.py` includes a `generate()` function that samples from the model's softmax distribution given a prompt (with temperature control):
