@@ -4,6 +4,7 @@ import os
 import torch
 import torch.nn as nn
 from datasets import load_dataset
+from tqdm import tqdm
 from tokenizers import ByteLevelBPETokenizer, Tokenizer
 from torch.utils.data import DataLoader, Dataset
 
@@ -126,7 +127,8 @@ def main():
     for epoch in range(1, args.epochs + 1):
         model.train()
         total, n = 0.0, 0
-        for step, (x, y) in enumerate(train_dl, 1):
+        pbar = tqdm(train_dl, desc=f"epoch {epoch}/{args.epochs}", unit="batch")
+        for x, y in pbar:
             x, y = x.to(device), y.to(device)
             optimizer.zero_grad()
             loss = loss_fn(model(x, logits=True), y)
@@ -134,8 +136,8 @@ def main():
             optimizer.step()
             total += loss.item() * len(y)
             n += len(y)
-            if step % 200 == 0:
-                print(f"epoch {epoch} step {step}: loss {total / n:.4f}")
+            pbar.set_postfix(loss=f"{total / n:.4f}")
+        pbar.close()
         val_loss = evaluate(model, val_dl, device)
         print(f"epoch {epoch} done: train_loss {total / n:.4f} val_loss {val_loss:.4f}")
 
