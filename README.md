@@ -121,7 +121,7 @@ from tokenizers import ByteLevelBPETokenizer
 from model import NeuralModel
 import torch
 
-tok = ByteLevelBPETokenizer.from_file("tokenizer.json")
+tok = Tokenizer.from_file("tokenizer.json")
 model = NeuralModel(tok.get_vocab_size(), 128, 10, 256)
 model.load_state_dict(torch.load("model.pt", map_location="cpu"))
 

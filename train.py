@@ -4,7 +4,7 @@ import os
 import torch
 import torch.nn as nn
 from datasets import load_dataset
-from tokenizers import ByteLevelBPETokenizer
+from tokenizers import ByteLevelBPETokenizer, Tokenizer
 from torch.utils.data import DataLoader, Dataset
 
 from model import NeuralModel
@@ -35,7 +35,7 @@ class NPLMDataset(Dataset):
 
 def build_tokenizer():
     if os.path.exists(TOKENIZER_FILE):
-        return ByteLevelBPETokenizer.from_file(TOKENIZER_FILE)
+        return Tokenizer.from_file(TOKENIZER_FILE)
     print("downloading wikitext-2 train split...")
     ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
     with open("wikitext2_train.txt", "w", encoding="utf-8") as f:
@@ -97,9 +97,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--epochs", type=int, default=EPOCHS)
     parser.add_argument("--limit", type=int, default=0, help="max tokens per split for quick tests")
+    parser.add_argument("--device", type=str, default="auto", choices=["auto", "cpu", "cuda"])
     args = parser.parse_args()
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = args.device
+    if device == "auto":
+        device = "cuda" if torch.cuda.is_available() else "cpu"
     tok = build_tokenizer()
     vocab_size = tok.get_vocab_size()
 
